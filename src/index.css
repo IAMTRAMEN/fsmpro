@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Scrollbar Styling */
+@layer utilities {
+  /* Light mode scrollbar */
+  .scrollbar-light {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db #f9fafb;
+  }
+
+  .scrollbar-light::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-light::-webkit-scrollbar-track {
+    background: #f9fafb;
+    border-radius: 4px;
+  }
+
+  .scrollbar-light::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 4px;
+  }
+
+  .scrollbar-light::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+  }
+
+  /* Dark mode scrollbar */
+  .scrollbar-dark {
+    scrollbar-width: thin;
+    scrollbar-color: #4b5563 #1f2937;
+  }
+
+  .scrollbar-dark::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-dark::-webkit-scrollbar-track {
+    background: #1f2937;
+    border-radius: 4px;
+  }
+
+  .scrollbar-dark::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    border-radius: 4px;
+  }
+
+  .scrollbar-dark::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+
+  /* Global scrollbar styling based on theme */
+  html {
+    scrollbar-width: thin;
+  }
+
+  html:not(.dark) {
+    scrollbar-color: #d1d5db #f9fafb;
+  }
+
+  html:not(.dark)::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  html:not(.dark)::-webkit-scrollbar-track {
+    background: #f9fafb;
+    border-radius: 4px;
+  }
+
+  html:not(.dark)::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 4px;
+  }
+
+  html:not(.dark)::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+  }
+
+  html.dark {
+    scrollbar-color: #4b5563 #1f2937;
+  }
+
+  html.dark::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  html.dark::-webkit-scrollbar-track {
+    background: #1f2937;
+    border-radius: 4px;
+  }
+
+  html.dark::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    border-radius: 4px;
+  }
+
+  html.dark::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+}

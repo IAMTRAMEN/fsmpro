@@ -1,0 +1,9 @@
+{
+  "lineItems": [{"id": "item1", "description": "Test Item", "quantity": 1, "unitPrice": 100, "taxRate": 10}],
+  "subtotal": 100,
+  "taxAmount": 10,
+  "total": 110,
+  "status": "Paid",
+  "dueDate": "2025-12-15",
+  "notes": "Test note"
+}

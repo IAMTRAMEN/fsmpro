@@ -1,0 +1,231 @@
+import React, { useState } from 'react';
+import { useFSMStore } from '../store/useFSMStore';
+import { Search, MapPin, Phone, Mail, Truck, Plus, Edit2, Trash2 } from 'lucide-react';
+import Modal from '../components/Modal';
+import { Provider } from '../types';
+
+const Providers = () => {
+  const { providers, currentUser, addProvider, updateProvider, deleteProvider } = useFSMStore();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Form State
+  const [formData, setFormData] = useState<Partial<Provider>>({
+    name: '',
+    serviceType: '',
+    email: '',
+    phone: '',
+    address: '',
+    status: 'Active'
+  });
+
+  const filteredProviders = providers.filter(p =>
+    (p.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (p.serviceType?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+  );
+
+  const canManageProviders = ['Manager', 'Owner', 'SuperAdmin'].includes(currentUser?.role || '');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingId) {
+      updateProvider(editingId, formData);
+    } else {
+      const newProvider: Provider = {
+        id: `p${Date.now()}`,
+        name: formData.name || '',
+        serviceType: formData.serviceType || '',
+        email: formData.email || '',
+        phone: formData.phone || '',
+        address: formData.address || '',
+        status: formData.status as 'Active' | 'Inactive' || 'Active'
+      };
+      addProvider(newProvider);
+    }
+    setIsModalOpen(false);
+    setEditingId(null);
+    setFormData({ name: '', serviceType: '', email: '', phone: '', address: '', status: 'Active' });
+  };
+
+  const handleEdit = (provider: Provider) => {
+    setEditingId(provider.id);
+    setFormData(provider);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this provider?')) {
+      deleteProvider(id);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Providers</h1>
+          <p className="text-gray-500 dark:text-gray-400">Manage service providers and suppliers</p>
+        </div>
+        {canManageProviders && (
+          <button 
+            onClick={() => {
+              setEditingId(null);
+              setFormData({ name: '', serviceType: '', email: '', phone: '', address: '', status: 'Active' });
+              setIsModalOpen(true);
+            }}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Add Provider
+          </button>
+        )}
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search providers by name or service..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredProviders.map((provider) => (
+          <div key={provider.id} className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow relative group">
+            {canManageProviders && (
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => handleEdit(provider)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400">
+                  <Edit2 className="w-4 h-4" />
+                </button>
+                <button onClick={() => handleDelete(provider.id)} className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            <div className="flex justify-between items-start mb-4">
+              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center text-orange-600 dark:text-orange-400 font-bold text-xl">
+                <Truck className="w-6 h-6" />
+              </div>
+              <span className={`mt-6 px-2 py-1 rounded text-xs font-medium ${
+                provider.status === 'Active' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+              }`}>
+                {provider.status}
+              </span>
+            </div>
+
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 text-lg mb-1">{provider.name}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{provider.serviceType}</p>
+
+            <div className="space-y-2 pt-4 border-t border-gray-50 dark:border-gray-700">
+              <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400 text-sm">
+                <Mail className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                {provider.email}
+              </div>
+              <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400 text-sm">
+                <Phone className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                {provider.phone}
+              </div>
+              <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400 text-sm">
+                <MapPin className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                {provider.address}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editingId ? "Edit Provider" : "Add Provider"}
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+            <input
+              type="text"
+              required
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+              value={formData.name}
+              onChange={e => setFormData({...formData, name: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Service Type</label>
+            <input
+              type="text"
+              required
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+              value={formData.serviceType}
+              onChange={e => setFormData({...formData, serviceType: e.target.value})}
+              placeholder="e.g. Logistics, Parts"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+            <input
+              type="email"
+              required
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+              value={formData.email}
+              onChange={e => setFormData({...formData, email: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
+            <input
+              type="text"
+              required
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+              value={formData.phone}
+              onChange={e => setFormData({...formData, phone: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Address</label>
+            <input
+              type="text"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+              value={formData.address}
+              onChange={e => setFormData({...formData, address: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+            <select
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+              value={formData.status}
+              onChange={e => setFormData({...formData, status: e.target.value as any})}
+            >
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              {editingId ? 'Update' : 'Add'}
+            </button>
+          </div>
+        </form>
+      </Modal>
+    </div>
+  );
+};
+
+export default Providers;
