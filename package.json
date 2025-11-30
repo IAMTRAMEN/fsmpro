@@ -52,8 +52,7 @@
     "tailwindcss": "^3.4.1",
     "three": "^0.179.1",
     "zod": "^3.25.67",
-    "zustand": "^4.4.7",
-    "vite": "^7.2.4"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -68,6 +67,7 @@
     "autoprefixer": "^10.4.22",
     "postcss": "^8.5.6",
     "tsx": "^4.20.6",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "vite": "^7.2.4"
   }
 }
