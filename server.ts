@@ -57,14 +57,10 @@ const PORT = process.env.API_PORT || 5000;
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-
-app.use(express.static(path.join(__dirname, 'public')));
-
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')));
 }
 
-// Server-Sent Events for real-time updates
 app.get('/api/events', (req: Request, res: Response) => {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
@@ -1748,18 +1744,6 @@ setInterval(checkOverdueInvoices, 60 * 60 * 1000);
 // Initial overdue check on startup
 setTimeout(checkOverdueInvoices, 5000);
 
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req: Request, res: Response) => {
-    const distPath = path.join(__dirname, 'dist', 'index.html');
-    res.sendFile(distPath, (err) => {
-      if (err) {
-        res.status(404).json({ error: 'Not found' });
-      }
-    });
-  });
-}
-
 app.listen(PORT, async () => {
-  console.log(`🚀 Server running on port ${PORT}`);
   await initializeDatabase();
 });

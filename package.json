@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev:server": "tsx server.ts",
     "dev:full": " \"npm run dev\" \"npm run dev:server\"",
-    "build": "vite build",
+    "build": "npx vite build",
     "start": "tsx server.ts",
     "preview": "npm run build && tsx server.ts",
     "create-admin": "tsx create-admin.ts"
@@ -68,6 +68,6 @@
     "postcss": "^8.5.6",
     "tsx": "^4.20.6",
     "typescript": "~5.8.3",
-    "vite": "^7.2.2"
+    "vite": "^7.2.4"
   }
 }

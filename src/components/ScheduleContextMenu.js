@@ -1,0 +1,5 @@
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { Copy, Edit, Trash2 } from 'lucide-react';
+export const ScheduleContextMenu = ({ x, y, workOrder, onEdit, onDuplicate, onDelete }) => {
+    return (_jsxs("div", { className: "fixed z-50 bg-white border border-gray-300 rounded-lg shadow-lg py-1 context-menu", style: { left: x, top: y }, children: [_jsxs("button", { onClick: () => onEdit(workOrder), className: "w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2", children: [_jsx(Edit, { className: "w-4 h-4" }), "Edit"] }), onDuplicate && (_jsxs(_Fragment, { children: [_jsxs("button", { onClick: () => onDuplicate(workOrder), className: "w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2", children: [_jsx(Copy, { className: "w-4 h-4" }), "Duplicate"] }), _jsx("hr", { className: "my-1" })] })), onDelete && (_jsxs("button", { onClick: () => onDelete(workOrder.id), className: "w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2", children: [_jsx(Trash2, { className: "w-4 h-4" }), "Delete"] }))] }));
+};
